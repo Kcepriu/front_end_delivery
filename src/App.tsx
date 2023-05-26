@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { FC, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
 
-function App() {
+import MainLayout from "./layouts/MainLayout/MainLayout";
+import { nameRouters } from "./constants/nameRouters";
+const Shop = lazy(() => import("./pages/Shop/Shop"));
+const Order = lazy(() => import("./pages/Order/Order"));
+const History = lazy(() => import("./pages/History/History"));
+const NotFound = lazy(() => import("./pages/NotFound/NotFound"));
+
+const App: FC = () => {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Routes>
+        <Route path={nameRouters.home} element={<MainLayout />}>
+          <Route index element={<Shop />} />
+          <Route path={nameRouters.shop} element={<Shop />} />
+          <Route path={`${nameRouters.shop}/:shopId`} element={<Shop />} />
+          <Route path={nameRouters.order} element={<Order />} />
+          <Route path={nameRouters.history} element={<History />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;
