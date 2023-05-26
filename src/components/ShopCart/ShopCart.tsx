@@ -5,12 +5,19 @@ import styles from "./ShopCart.module.scss";
 
 interface IProps {
   active: boolean;
+  isHover: boolean;
   shop: IShop;
 }
 
-const ShopCart: FC<IProps> = ({ shop, active }) => {
+const ShopCart: FC<IProps> = ({ shop, active, isHover }) => {
   return (
-    <div className={clsx(styles.Cart, active && styles.active)}>
+    <div
+      className={clsx(
+        styles.Cart,
+        active && styles.active,
+        isHover && styles.isHover
+      )}
+    >
       <p>{shop.name}</p>
     </div>
   );

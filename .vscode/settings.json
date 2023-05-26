@@ -8,7 +8,7 @@
     "[css][scss][less]": {
     "editor.defaultFormatter": "vscode.css-language-features"
     },
-    "scss.lint.unknownAtRules": "ignore"
+     "css.lint.unknownAtRules": "ignore"
 
 }
 

@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "./layouts/MainLayout/MainLayout";
 import { nameRouters } from "./constants/nameRouters";
+import RouteToActiveStore from "./components/RouteToActiveStore";
 const Shop = lazy(() => import("./pages/Shop/Shop"));
 const Order = lazy(() => import("./pages/Order/Order"));
 const History = lazy(() => import("./pages/History/History"));
@@ -13,9 +14,15 @@ const App: FC = () => {
     <div className="App">
       <Routes>
         <Route path={nameRouters.home} element={<MainLayout />}>
-          <Route index element={<Shop />} />
-          <Route path={nameRouters.shop} element={<Shop />} />
-          <Route path={`${nameRouters.shop}/:shopId`} element={<Shop />} />
+          <Route index element={<RouteToActiveStore component={<Shop />} />} />
+          <Route
+            path={nameRouters.shop}
+            element={<RouteToActiveStore component={<Shop />} />}
+          />
+          <Route
+            path={`${nameRouters.shop}/:shopId`}
+            element={<RouteToActiveStore component={<Shop />} />}
+          />
           <Route path={nameRouters.order} element={<Order />} />
           <Route path={nameRouters.history} element={<History />} />
         </Route>

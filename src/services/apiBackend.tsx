@@ -1,6 +1,6 @@
 import axios from "axios";
-import { URL_API } from "../../constants/api";
-import type { IShop, IGoods } from "../../types/typeShop";
+import { URL_API } from "../constants/api";
+import type { IShop, IGoods } from "../types/typeShop";
 
 export const getShops = async (
   controller: AbortController
@@ -24,7 +24,7 @@ export const getGoodsShop = async (
     baseURL: URL_API,
     signal: controller.signal,
     params: {
-      shopId: shopId,
+      shop: shopId,
     },
   });
 
