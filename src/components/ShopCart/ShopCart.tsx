@@ -1,17 +1,17 @@
 import { FC } from "react";
 import clsx from "clsx";
-// import type { IShop } from "../../types/typeShop";
+import type { IShop } from "../../types/typeShop";
 import styles from "./ShopCart.module.scss";
 
 interface IProps {
   active: boolean;
-  name: string;
+  shop: IShop;
 }
 
-const ShopCart: FC<IProps> = ({ name, active }) => {
+const ShopCart: FC<IProps> = ({ shop, active }) => {
   return (
     <div className={clsx(styles.Cart, active && styles.active)}>
-      <p>{name}</p>
+      <p>{shop.name}</p>
     </div>
   );
 };
