@@ -12,7 +12,8 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <OrderProvider>
-      <BrowserRouter basename="front_end_delivery">
+      {/* <BrowserRouter basename="front_end_delivery"> */}
+      <BrowserRouter>
         <App />
       </BrowserRouter>
     </OrderProvider>
