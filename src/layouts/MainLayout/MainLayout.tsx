@@ -1,6 +1,7 @@
 import { FC, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import HeaderPages from "../../components/HeaderPages/HeaderPages";
+import MainLoader from "../../components/MainLoader/MainLoader";
 import style from "./MainLayout.module.scss";
 
 const MainLayout: FC = () => {
@@ -9,7 +10,7 @@ const MainLayout: FC = () => {
       <div className={style.WrapPage}>
         <HeaderPages />
 
-        <Suspense fallback={<p>....Loading</p>}>
+        <Suspense fallback={<MainLoader />}>
           <Outlet />
         </Suspense>
       </div>

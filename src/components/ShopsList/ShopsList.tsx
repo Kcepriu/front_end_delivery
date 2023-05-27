@@ -17,6 +17,7 @@ const ShopsList: FC = () => {
 
   useEffect(() => {
     const controller = new AbortController();
+
     const load = async () => {
       setShowLoad(true);
       try {

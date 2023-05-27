@@ -15,10 +15,11 @@ export interface IGoods {
   // updatedAt: string;
 }
 
-interface IGoodsOrder {
+export interface IGoodsOrder {
   goods: string;
   count: number;
   sum: number;
+  price: number;
 }
 export interface IOrder {
   _id: string;
@@ -31,3 +32,15 @@ export interface IOrder {
   sum: number;
   goodsDocument: IGoodsOrder[];
 }
+
+export const emptyOrder: IOrder = {
+  _id: "",
+  name: "",
+  shop: "",
+  phone: "",
+  email: "",
+  location: "",
+  adress: "",
+  sum: 0,
+  goodsDocument: [],
+};

@@ -1,6 +1,7 @@
 import { FC } from "react";
 import ShopsList from "../../components/ShopsList/ShopsList";
 import GoodsListShop from "../../components/GoodsListShop/GoodsListShop";
+
 import style from "./Shop.module.scss";
 
 const Shop: FC = () => {

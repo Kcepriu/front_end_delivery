@@ -9,10 +9,11 @@ interface IProps {
 }
 
 const GoodsCartShop: FC<IProps> = ({ goods }) => {
-  const { setFiledToOrder } = useOrder();
+  const { addGoods, setFiledToOrder } = useOrder();
 
   const handlerOnClick = () => {
     setFiledToOrder("shop", goods.shop);
+    addGoods(goods, 1);
   };
 
   return (

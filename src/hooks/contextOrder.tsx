@@ -2,24 +2,21 @@ import {
   FC,
   createContext,
   useContext,
-  // useEffect,
   useState,
-  // Dispatch,
-  // SetStateAction,
   ReactNode,
+  useEffect,
 } from "react";
-import type { IOrder, IGoods } from "../types/typeShop";
+import type { IOrder, IGoods, IGoodsOrder } from "../types/typeShop";
+import { emptyOrder } from "../types/typeShop";
+import cloneDeep from "lodash.clonedeep";
 
-const emptyOrder: IOrder = {
-  _id: "",
-  name: "",
-  shop: "",
-  phone: "",
-  email: "",
-  location: "",
-  adress: "",
+import { useLocalStorage } from "./localStorage";
+
+const emptyGoodsOrder: IGoodsOrder = {
+  goods: "",
+  count: 0,
   sum: 0,
-  goodsDocument: [],
+  price: 0,
 };
 
 interface IContextProps {
@@ -34,16 +31,26 @@ interface IContextProps {
   addGoods: (goods: IGoods, count: number) => void;
   deleteGoods: (goodsId: string) => void;
   changeCountGoods: (goodsId: string, count: number) => void;
+  clearOrder: () => void;
 }
 
 const ContextOrder = createContext({} as IContextProps);
 
 export const useOrder = () => useContext(ContextOrder);
 
-export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [order, setOrder] = useState<IOrder>(emptyOrder);
+const getSumDocument = (goods: IGoodsOrder[]): number => {
+  const sum = goods.reduce((sum, element) => sum + element.sum, 0);
+  return sum;
+};
 
-  //TODO Save to local storage
+export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { saveData, loadData } = useLocalStorage();
+
+  const [order, setOrder] = useState<IOrder>(() => loadData());
+
+  useEffect(() => {
+    saveData(order);
+  }, [order, saveData]);
 
   function setFiledToOrder<
     T extends keyof Omit<IOrder, "goodsDocument">,
@@ -58,22 +65,78 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }
 
   function addGoods(goods: IGoods, count: number) {
-    // 1 Якщо така номенклатура є, то знаходимо рядок
-    // 1.2 Додаємо ткількість до пепоредньої
-    // 2 якщо нема то створюємо новий
-    // 2.1 Заповнюємо поля
-    // 3 Рахуємо суму рядка
-    // 4 рахуємо суму документу
-    console.log("addGoods");
+    setOrder((prev) => {
+      const { goodsDocument } = prev;
+      const newGoodsDocument = cloneDeep(goodsDocument);
+
+      // 1 find the line
+      const index = newGoodsDocument.findIndex(
+        (elem) => elem.goods === goods._id
+      );
+
+      let selectedRow;
+
+      if (index < 0) {
+        // if not fount .Create New
+        selectedRow = { ...emptyGoodsOrder };
+
+        // fill data
+        selectedRow.goods = goods._id;
+        selectedRow.price = goods.price;
+
+        // Add to array
+        newGoodsDocument.push(selectedRow);
+      } else {
+        selectedRow = newGoodsDocument[index];
+      }
+
+      // 1.2 change the amount
+      selectedRow.count += count;
+
+      // 3 count the sum of the line
+      selectedRow.sum = count * goods.price;
+
+      // 4 calculate the amount of the document
+      const sum = getSumDocument(newGoodsDocument);
+
+      return {
+        ...prev,
+        sum,
+        goodsDocument: [...newGoodsDocument],
+      };
+    });
   }
 
-  //TODO changeCountGoods
+  // * changeCountGoods
   function changeCountGoods(goodsId: string, count: number) {
-    console.log("changeCountGoods");
-    // 1 то знаходимо рядок
-    // 1.2 Змінюємо кількість
-    // 3 Рахуємо суму рядка
-    // 4 рахуємо суму документу
+    setOrder((prev) => {
+      const { goodsDocument } = prev;
+
+      const newGoodsDocument = cloneDeep(goodsDocument);
+
+      // 1 find the line
+      const index = newGoodsDocument.findIndex(
+        (elem) => elem.goods === goodsId
+      );
+
+      if (index < 0)
+        return {
+          ...prev,
+        };
+      // 1.2 change the amount
+      newGoodsDocument[index].count = count;
+
+      // 3 count the sum of the line
+      newGoodsDocument[index].sum = count * newGoodsDocument[index].price;
+
+      // 4 calculate the amount of the document
+      const sum = getSumDocument(newGoodsDocument);
+      return {
+        ...prev,
+        sum,
+        goodsDocument: newGoodsDocument,
+      };
+    });
   }
 
   // *  deleteGoods
@@ -85,11 +148,18 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         (elem) => elem.goods !== goodsId
       );
 
+      const shop = newGoodsDocument.length === 0 ? "" : prev.shop;
       return {
         ...prev,
+        shop,
         goodsDocument: newGoodsDocument,
       };
     });
+  }
+
+  // *  clearOrder
+  function clearOrder() {
+    setOrder({ ...emptyOrder });
   }
 
   return (
@@ -100,6 +170,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
         addGoods,
         deleteGoods,
         changeCountGoods,
+        clearOrder,
       }}
     >
       {children}
