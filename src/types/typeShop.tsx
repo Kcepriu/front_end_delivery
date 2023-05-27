@@ -52,3 +52,15 @@ export const emptyGoods: IGoods = {
   price: 0,
   shop: "",
 };
+
+export interface IFilter {
+  id: string;
+  phone: string;
+  email: string;
+}
+
+export const emptyFilter: IFilter = {
+  id: "",
+  phone: "",
+  email: "",
+};

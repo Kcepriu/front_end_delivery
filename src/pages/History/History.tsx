@@ -1,6 +1,7 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, ChangeEvent } from "react";
 import styles from "./History.module.scss";
-import type { IOrder } from "../../types/typeShop";
+import type { IOrder, IFilter } from "../../types/typeShop";
+import { emptyFilter } from "../../types/typeShop";
 import Loader from "../../components/Loader/Loader";
 import { getOrders } from "../../services/apiBackend";
 import OrdersList from "../../components/OrdersList/OrdersList";
@@ -9,17 +10,28 @@ const History: FC = () => {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [showLoad, setShowLoad] = useState(false);
 
+  const [filter, setFilter] = useState({ ...emptyFilter });
+
+  const handlerOnChangeFilter = (event: ChangeEvent<HTMLInputElement>) => {
+    setFilter({
+      ...emptyFilter,
+      [event.target.id]: event.target.value,
+    });
+  };
+
+  //TODO Переобити На Затримку
+
   useEffect(() => {
     const controller = new AbortController();
 
     const load = async () => {
       setShowLoad(true);
       try {
-        const listOrders = await getOrders(controller);
+        const listOrders = await getOrders(filter, controller);
         setOrders(listOrders);
       } catch (Error) {
         setOrders([]);
-        console.log("Error fetch", Error);
+        // console.log("Error fetch", Error);
       } finally {
         setShowLoad(false);
       }
@@ -30,7 +42,7 @@ const History: FC = () => {
     return () => {
       controller.abort();
     };
-  }, []);
+  }, [filter]);
 
   return (
     <div className={styles.WrapPage}>
@@ -42,10 +54,10 @@ const History: FC = () => {
             </label>
             <input
               className={styles.Input}
-              id="adress"
+              id="id"
               type="text"
-              // value={order.adress}
-              // onChange={handlerOnChange}
+              value={filter.id}
+              onChange={handlerOnChangeFilter}
               placeholder="Input ID order"
               required
             />
@@ -59,9 +71,9 @@ const History: FC = () => {
               className={styles.Input}
               id="email"
               type="email"
-              // value={order.email}
+              value={filter.email}
               // // pattern="^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})$"
-              // onChange={handlerOnChange}
+              onChange={handlerOnChangeFilter}
               placeholder="Input email"
               required
             />
@@ -76,8 +88,8 @@ const History: FC = () => {
               id="phone"
               pattern="^[+]?\d{1,4}[-.\s]?(\d{1,3})?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$"
               type="tel"
-              // value={order.phone}
-              // onChange={handlerOnChange}
+              value={filter.phone}
+              onChange={handlerOnChangeFilter}
               placeholder="Input phone"
               required
             />

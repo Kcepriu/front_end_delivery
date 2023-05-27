@@ -1,6 +1,6 @@
 import axios from "axios";
 import { URL_API } from "../constants/api";
-import type { IShop, IGoods, IOrder } from "../types/typeShop";
+import type { IShop, IGoods, IOrder, IFilter } from "../types/typeShop";
 import { emptyGoods } from "../types/typeShop";
 
 export const getShops = async (
@@ -69,6 +69,79 @@ export const createOrder = async (order: IOrder): Promise<boolean> => {
 };
 
 export const getOrders = async (
+  filter: IFilter,
+  controller: AbortController
+): Promise<IOrder[]> => {
+  if (filter.id) {
+    const result = await getOrdersById(filter.id, controller);
+    return result;
+  } else if (filter.email) {
+    //Шуккаємо по email
+    const result = await getOrdersByEmail(filter.email, controller);
+    return result;
+  } else if (filter.phone) {
+    //Шуккаємо по phone
+    const result = await getOrdersByPhone(filter.phone, controller);
+    return result;
+  }
+
+  const result = await getAllOrders(controller);
+  return result;
+};
+
+// * getAllOrders
+export const getAllOrders = async (
+  controller: AbortController
+): Promise<IOrder[]> => {
+  const { data: responsData } = await axios.get("/api/orders", {
+    baseURL: URL_API,
+    signal: controller.signal,
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return [];
+
+  return data;
+};
+
+// * getOrdersById
+export const getOrdersById = async (
+  id: string,
+  controller: AbortController
+): Promise<IOrder[]> => {
+  const ADD_URL = !id ? "" : `/${id}`;
+  console.log("getOrdersById", ADD_URL);
+
+  const { data: responsData } = await axios.get("/api/orders" + ADD_URL, {
+    baseURL: URL_API,
+    signal: controller.signal,
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return [];
+
+  return [data];
+};
+
+// TODO
+export const getOrdersByEmail = async (
+  email: string,
+  controller: AbortController
+): Promise<IOrder[]> => {
+  const { data: responsData } = await axios.get("/api/orders", {
+    baseURL: URL_API,
+    signal: controller.signal,
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return [];
+
+  return data;
+};
+
+// TODO
+export const getOrdersByPhone = async (
+  phone: string,
   controller: AbortController
 ): Promise<IOrder[]> => {
   const { data: responsData } = await axios.get("/api/orders", {

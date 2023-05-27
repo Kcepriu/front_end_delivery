@@ -20,7 +20,7 @@ const GoodsCartHistory: FC<IProps> = ({ goods }) => {
         setGoodsFull(goodsInfo);
       } catch (Error) {
         setGoodsFull({ ...emptyGoods });
-        console.log("Error fetch information obout goods", Error);
+        // console.log("Error fetch information obout goods", Error);
       }
     };
 
