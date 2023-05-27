@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, FormEvent } from "react";
 import { useOrder } from "../../hooks/contextOrder";
 import styles from "./Order.module.scss";
 import FormAdressOrder from "../../components/FormAdressOrder/FormAdressOrder";
@@ -7,15 +7,21 @@ import GoodsCartOrder from "../../components/GoodsCartOrder/GoodsCartOrder";
 
 const Order: FC = () => {
   const { order, clearOrder } = useOrder();
+
+  const handlerOnSubmit = (event: FormEvent<HTMLFormElement>) => {
+    console.log("handlerOnSubmit");
+    event.preventDefault();
+  };
+
   return (
     <div className={styles.WrapPage}>
       <div className={styles.WrapColumn}>
         <div className={styles.WrapMap}>
           <Map />
         </div>
-        <FormAdressOrder />
+        <FormAdressOrder handlerOnSubmit={handlerOnSubmit} />
       </div>
-      <div className={styles.WrapColumn}>
+      <div className={styles.WrapRight}>
         <div className={styles.WrapOrderContent}>
           <ul className={styles.ListGoods}>
             {order.goodsDocument.map((goods) => {
@@ -32,7 +38,11 @@ const Order: FC = () => {
           <p className={styles.TotalPrice}>
             Total price: <span>{order.sum} </span>
           </p>
-          <button type="button" className={styles.ButtonSubmit}>
+          <button
+            type="button"
+            className={styles.ButtonSubmit}
+            // onClick={handlerOnSubmit}
+          >
             Submit
           </button>
         </div>

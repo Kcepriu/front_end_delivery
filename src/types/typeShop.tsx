@@ -44,3 +44,11 @@ export const emptyOrder: IOrder = {
   sum: 0,
   goodsDocument: [],
 };
+
+export const emptyGoods: IGoods = {
+  _id: "",
+  name: "",
+  urlPicture: "",
+  price: 0,
+  shop: "",
+};

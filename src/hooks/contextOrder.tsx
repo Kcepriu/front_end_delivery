@@ -94,7 +94,7 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       selectedRow.count += count;
 
       // 3 count the sum of the line
-      selectedRow.sum = count * goods.price;
+      selectedRow.sum = selectedRow.count * goods.price;
 
       // 4 calculate the amount of the document
       const sum = getSumDocument(newGoodsDocument);
@@ -149,9 +149,13 @@ export const OrderProvider: FC<{ children: ReactNode }> = ({ children }) => {
       );
 
       const shop = newGoodsDocument.length === 0 ? "" : prev.shop;
+
+      const sum = getSumDocument(newGoodsDocument);
+
       return {
         ...prev,
         shop,
+        sum,
         goodsDocument: newGoodsDocument,
       };
     });
