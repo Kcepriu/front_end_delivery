@@ -1,0 +1,1 @@
+{"version":3,"file":"static/js/744.42ebba2a.chunk.js","mappings":"iJAMA,UAJqB,WACnB,OAAOA,EAAAA,EAAAA,KAAA,KAAAC,SAAG,YACZ,C","sources":["pages/NotFound/NotFound.tsx"],"sourcesContent":["import { FC } from \"react\";\n\nconst NotFound: FC = () => {\n  return <p>NotFound</p>;\n};\n\nexport default NotFound;\n"],"names":["_jsx","children"],"sourceRoot":""}
