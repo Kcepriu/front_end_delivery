@@ -1,24 +1,28 @@
-import { FC, ChangeEvent, FormEvent } from "react";
+import { ForwardRefRenderFunction, ChangeEvent } from "react";
 import { useOrder } from "../../hooks/contextOrder";
 import styles from "./FormAdressOrder.module.scss";
-import { forwardRef } from "react";
+import { useRef, useImperativeHandle } from "react";
+import type { FormRef, FormProps } from "../../types/typesForRef";
 
-const phoneRegExp =
-  "^+?d{1,4}[-.s]?(?d{1,3})?[-.s]?d{1,4}[-.s]?d{1,4}[-.s]?d{1,9}$";
+// const FormAdressOrder: FC<IProps> = ({ handlerOnSubmit }, ref) => {
 
-const emailRegExp = "^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$";
-
-interface IProps {
-  handlerOnSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}
-
-const FormAdressOrder: FC<IProps> = ({ handlerOnSubmit }) => {
+const FormAdressOrder: ForwardRefRenderFunction<FormRef, FormProps> = (
+  { handlerOnSubmit },
+  ref
+) => {
   const { order, setFiledToOrder } = useOrder();
 
-  // const handlerOnSubmit = (event: FormEvent<HTMLFormElement>) => {
-  //   event.preventDefault();
-  //   console.log("handlerOnSubmit");
-  // };
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const submitForm = () => {
+    if (formRef.current) {
+      formRef.current.submit();
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    submitForm,
+  }));
 
   const handlerOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     //@ts-ignore
@@ -26,7 +30,7 @@ const FormAdressOrder: FC<IProps> = ({ handlerOnSubmit }) => {
   };
 
   return (
-    <form className={styles.Form} onSubmit={handlerOnSubmit}>
+    <form className={styles.Form} ref={formRef} onSubmit={handlerOnSubmit}>
       <div className={styles.WrapInput}>
         <label htmlFor="adress" className={styles.Label}>
           Address:
@@ -51,7 +55,7 @@ const FormAdressOrder: FC<IProps> = ({ handlerOnSubmit }) => {
           id="email"
           type="email"
           value={order.email}
-          pattern={emailRegExp}
+          // pattern="^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})$"
           onChange={handlerOnChange}
           placeholder="Input email"
           required
@@ -65,8 +69,8 @@ const FormAdressOrder: FC<IProps> = ({ handlerOnSubmit }) => {
         <input
           className={styles.Input}
           id="phone"
+          pattern="^[+]?\d{1,4}[-.\s]?(\d{1,3})?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$"
           type="tel"
-          pattern={phoneRegExp}
           value={order.phone}
           onChange={handlerOnChange}
           placeholder="Input phone"
