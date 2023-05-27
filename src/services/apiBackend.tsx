@@ -67,3 +67,17 @@ export const createOrder = async (order: IOrder): Promise<boolean> => {
 
   return true;
 };
+
+export const getOrders = async (
+  controller: AbortController
+): Promise<IOrder[]> => {
+  const { data: responsData } = await axios.get("/api/orders", {
+    baseURL: URL_API,
+    signal: controller.signal,
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return [];
+
+  return data;
+};

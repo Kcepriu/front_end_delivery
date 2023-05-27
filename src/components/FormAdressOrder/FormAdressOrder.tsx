@@ -17,8 +17,7 @@ const FormAdressOrder: FC = () => {
     try {
       const result = await createOrder(order);
       if (result) {
-        console.log("OK");
-        //clearOrder();
+        clearOrder();
       }
     } catch (Error) {
       console.log(Error);
