@@ -77,11 +77,11 @@ export const getOrders = async (
     return result;
   } else if (filter.email) {
     //Шуккаємо по email
-    const result = await getOrdersByEmail(filter.email, controller);
+    const result = await getOrdersByField("email", filter.email, controller);
     return result;
   } else if (filter.phone) {
     //Шуккаємо по phone
-    const result = await getOrdersByPhone(filter.phone, controller);
+    const result = await getOrdersByField("phone", filter.phone, controller);
     return result;
   }
 
@@ -123,30 +123,18 @@ export const getOrdersById = async (
   return [data];
 };
 
-// TODO
-export const getOrdersByEmail = async (
-  email: string,
+// * getOrdersByField
+export const getOrdersByField = async (
+  nameField: string,
+  value: string,
   controller: AbortController
 ): Promise<IOrder[]> => {
   const { data: responsData } = await axios.get("/api/orders", {
     baseURL: URL_API,
     signal: controller.signal,
-  });
-
-  const { code, data } = responsData;
-  if (code !== 200) return [];
-
-  return data;
-};
-
-// TODO
-export const getOrdersByPhone = async (
-  phone: string,
-  controller: AbortController
-): Promise<IOrder[]> => {
-  const { data: responsData } = await axios.get("/api/orders", {
-    baseURL: URL_API,
-    signal: controller.signal,
+    params: {
+      [nameField]: value,
+    },
   });
 
   const { code, data } = responsData;

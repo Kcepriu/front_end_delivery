@@ -7,7 +7,7 @@ export const useLocalStorage = () => {
       const serializedState = JSON.stringify(data);
       localStorage.setItem(NAME_STORAGE, serializedState);
     } catch (Error) {
-      console.error("Set state error: ", Error);
+      // console.error("Set state error: ", Error);
     }
   }
 

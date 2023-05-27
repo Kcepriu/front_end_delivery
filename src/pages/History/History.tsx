@@ -1,25 +1,35 @@
 import { FC, useState, useEffect, ChangeEvent } from "react";
 import styles from "./History.module.scss";
-import type { IOrder, IFilter } from "../../types/typeShop";
+import type { IOrder } from "../../types/typeShop";
 import { emptyFilter } from "../../types/typeShop";
 import Loader from "../../components/Loader/Loader";
 import { getOrders } from "../../services/apiBackend";
 import OrdersList from "../../components/OrdersList/OrdersList";
+import { useDebouncedCallback } from "use-debounce";
 
 const History: FC = () => {
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [showLoad, setShowLoad] = useState(false);
-
   const [filter, setFilter] = useState({ ...emptyFilter });
 
+  const [valueFilter, setVaLueFilter] = useState({ ...emptyFilter });
+
+  const debouncedChangeFilter = useDebouncedCallback((value) => {
+    console.log("Change filter");
+    setFilter(value);
+  }, 1000);
+
   const handlerOnChangeFilter = (event: ChangeEvent<HTMLInputElement>) => {
-    setFilter({
+    setVaLueFilter({
+      ...emptyFilter,
+      [event.target.id]: event.target.value,
+    });
+
+    debouncedChangeFilter({
       ...emptyFilter,
       [event.target.id]: event.target.value,
     });
   };
-
-  //TODO Переобити На Затримку
 
   useEffect(() => {
     const controller = new AbortController();
@@ -56,7 +66,7 @@ const History: FC = () => {
               className={styles.Input}
               id="id"
               type="text"
-              value={filter.id}
+              value={valueFilter.id}
               onChange={handlerOnChangeFilter}
               placeholder="Input ID order"
               required
@@ -71,7 +81,7 @@ const History: FC = () => {
               className={styles.Input}
               id="email"
               type="email"
-              value={filter.email}
+              value={valueFilter.email}
               // // pattern="^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})$"
               onChange={handlerOnChangeFilter}
               placeholder="Input email"
@@ -88,7 +98,7 @@ const History: FC = () => {
               id="phone"
               pattern="^[+]?\d{1,4}[-.\s]?(\d{1,3})?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$"
               type="tel"
-              value={filter.phone}
+              value={valueFilter.phone}
               onChange={handlerOnChangeFilter}
               placeholder="Input phone"
               required

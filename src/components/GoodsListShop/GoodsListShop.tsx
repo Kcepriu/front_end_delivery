@@ -26,7 +26,7 @@ const GoodsListShop: FC = () => {
         setGoods(listGoods);
       } catch (Error) {
         setGoods([]);
-        console.log("Error fetch goods", Error);
+        // console.log("Error fetch goods", Error);
       } finally {
         setShowLoad(false);
       }
