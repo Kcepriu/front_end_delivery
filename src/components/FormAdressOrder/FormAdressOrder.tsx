@@ -1,36 +1,32 @@
-import { ForwardRefRenderFunction, ChangeEvent } from "react";
+import { FC, FormEvent, ChangeEvent } from "react";
 import { useOrder } from "../../hooks/contextOrder";
 import styles from "./FormAdressOrder.module.scss";
-import { useRef, useImperativeHandle } from "react";
-import type { FormRef, FormProps } from "../../types/typesForRef";
+import { createOrder } from "../../services/apiBackend";
 
-// const FormAdressOrder: FC<IProps> = ({ handlerOnSubmit }, ref) => {
-
-const FormAdressOrder: ForwardRefRenderFunction<FormRef, FormProps> = (
-  { handlerOnSubmit },
-  ref
-) => {
-  const { order, setFiledToOrder } = useOrder();
-
-  const formRef = useRef<HTMLFormElement>(null);
-
-  const submitForm = () => {
-    if (formRef.current) {
-      formRef.current.submit();
-    }
-  };
-
-  useImperativeHandle(ref, () => ({
-    submitForm,
-  }));
+const FormAdressOrder: FC = () => {
+  const { order, setFiledToOrder, clearOrder } = useOrder();
 
   const handlerOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     //@ts-ignore
     setFiledToOrder(event.target.id, event.target.value);
   };
 
+  const handlerOnSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const result = await createOrder(order);
+      if (result) {
+        console.log("OK");
+        //clearOrder();
+      }
+    } catch (Error) {
+      console.log(Error);
+    }
+  };
+
   return (
-    <form className={styles.Form} ref={formRef} onSubmit={handlerOnSubmit}>
+    <form className={styles.Form} onSubmit={handlerOnSubmit}>
       <div className={styles.WrapInput}>
         <label htmlFor="adress" className={styles.Label}>
           Address:
@@ -92,7 +88,9 @@ const FormAdressOrder: ForwardRefRenderFunction<FormRef, FormProps> = (
           required
         />
       </div>
-      <button type="submit">TEst</button>
+      <button type="submit" className={styles.ButtonSubmit}>
+        Submit
+      </button>
     </form>
   );
 };

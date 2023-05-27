@@ -1,28 +1,12 @@
-import { FC, FormEvent, useRef, forwardRef } from "react";
+import { FC } from "react";
 import { useOrder } from "../../hooks/contextOrder";
 import styles from "./Order.module.scss";
 import FormAdressOrder from "../../components/FormAdressOrder/FormAdressOrder";
 import Map from "../../components/Map/Map";
 import GoodsCartOrder from "../../components/GoodsCartOrder/GoodsCartOrder";
-import type { FormRef, FormProps } from "../../types/typesForRef";
-
-const ForwardedForm = forwardRef<FormRef, FormProps>(FormAdressOrder);
 
 const Order: FC = () => {
   const { order, clearOrder } = useOrder();
-  const formRef = useRef<FormRef>(null);
-
-  const handlerOnSubmit = (event: FormEvent<HTMLFormElement>) => {
-    console.log("11111111111111111111111111");
-    console.log("handlerOnSubmit");
-    event.preventDefault();
-  };
-
-  const handlerOnClickSubmit = () => {
-    if (formRef.current) {
-      formRef.current.submitForm();
-    }
-  };
 
   return (
     <div className={styles.WrapPage}>
@@ -30,7 +14,7 @@ const Order: FC = () => {
         <div className={styles.WrapMap}>
           <Map />
         </div>
-        <ForwardedForm ref={formRef} handlerOnSubmit={handlerOnSubmit} />
+        <FormAdressOrder />
       </div>
       <div className={styles.WrapRight}>
         <div className={styles.WrapOrderContent}>
@@ -49,13 +33,13 @@ const Order: FC = () => {
           <p className={styles.TotalPrice}>
             Total price: <span>{order.sum} </span>
           </p>
-          <button
+          {/* <button
             type="button"
             className={styles.ButtonSubmit}
-            onClick={handlerOnClickSubmit}
+            // onClick={handlerOnClickSubmit}
           >
             Submit
-          </button>
+          </button> */}
         </div>
         <button
           type="button"
