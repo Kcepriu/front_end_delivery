@@ -18,9 +18,12 @@ const GoodsCartHistory: FC<IProps> = ({ goods }) => {
       try {
         const goodsInfo = await getInfoGoods(goods.goods, controller);
         setGoodsFull(goodsInfo);
-      } catch (Error) {
+      } catch (error) {
         setGoodsFull({ ...emptyGoods });
-        // console.log("Error fetch information obout goods", Error);
+        if (!(error instanceof Error)) return;
+        if (error.name !== "CanceledError") {
+          console.log("Error fetch information obout goods", error);
+        }
       }
     };
 

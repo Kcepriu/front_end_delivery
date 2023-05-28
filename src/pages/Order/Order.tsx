@@ -1,12 +1,20 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useOrder } from "../../hooks/contextOrder";
 import styles from "./Order.module.scss";
 import FormAdressOrder from "../../components/FormAdressOrder/FormAdressOrder";
 import Map from "../../components/Map/Map";
 import GoodsCartOrder from "../../components/GoodsCartOrder/GoodsCartOrder";
 
+import ReCAPTCHA from "react-google-recaptcha";
+import { CAPTHCA_KEY } from "../../constants/googkeKeys";
+
 const Order: FC = () => {
   const { order, clearOrder } = useOrder();
+  const [isPeople, setIsPeople] = useState(false);
+
+  function handlerCaptcha(value: string | null) {
+    setIsPeople(!!value);
+  }
 
   return (
     <div className={styles.WrapPage}>
@@ -14,7 +22,7 @@ const Order: FC = () => {
         <div className={styles.WrapMap}>
           <Map />
         </div>
-        <FormAdressOrder />
+        <FormAdressOrder isPeople={isPeople} />
       </div>
       <div className={styles.WrapRight}>
         <div className={styles.WrapOrderContent}>
@@ -29,17 +37,14 @@ const Order: FC = () => {
           </ul>
         </div>
 
+        <div className={styles.WrapCaptcha}>
+          <ReCAPTCHA sitekey={CAPTHCA_KEY} onChange={handlerCaptcha} />
+        </div>
+
         <div className={styles.Basement}>
           <p className={styles.TotalPrice}>
             Total price: <span>{order.sum} </span>
           </p>
-          {/* <button
-            type="button"
-            className={styles.ButtonSubmit}
-            // onClick={handlerOnClickSubmit}
-          >
-            Submit
-          </button> */}
         </div>
         <button
           type="button"

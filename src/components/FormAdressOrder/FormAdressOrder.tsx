@@ -1,46 +1,48 @@
-import { FC, FormEvent, ChangeEvent, useState, useCallback } from "react";
-import { useOrder } from "../../hooks/contextOrder";
+import { FC, FormEvent, ChangeEvent } from "react";
 import styles from "./FormAdressOrder.module.scss";
+import { useOrder } from "../../hooks/contextOrder";
 import { createOrder } from "../../services/apiBackend";
-
-import { GoogleReCaptcha } from "react-google-recaptcha-v3";
-
-const FormAdressOrder: FC = () => {
+import { showErrorMessage } from "../../helpers/message";
+interface IProps {
+  isPeople: boolean;
+}
+const FormAdressOrder: FC<IProps> = ({ isPeople }) => {
   const { order, setFiledToOrder, clearOrder } = useOrder();
-
-  const [token, setToken] = useState();
-  const [refreshReCaptcha, setRefreshReCaptcha] = useState(false);
-
-  const onVerify = useCallback((token: any) => {
-    setToken(token);
-  }, []);
-
-  const doSomething = () => {
-    /* do something like submit a form and then refresh recaptcha */
-    setRefreshReCaptcha((r) => !r);
-  };
 
   const handlerOnChange = (event: ChangeEvent<HTMLInputElement>) => {
     //@ts-ignore
     setFiledToOrder(event.target.id, event.target.value);
   };
 
+  const validationData = (): boolean => {
+    let message = "";
+
+    if (!order.adress)
+      message = message + '\n The "address" field is not filled';
+    if (!order.email) message = message + '\n The "email" field is not filled';
+    if (!order.phone) message = message + '\n The "phone" field is not filled';
+    if (!order.name) message = message + '\n The "name" field is not filled';
+    if (order.goodsDocument.length === 0) {
+      message = message + "\n No products have been added";
+    }
+    if (message) showErrorMessage(message);
+
+    return !message;
+  };
   const handlerOnSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (token) {
-      console.log("token ok");
-    } else {
-      console.log("token ERRR");
-      return;
-    }
+    if (!isPeople) return;
+    if (!validationData()) return;
 
     try {
       const result = await createOrder(order);
-      if (result) {
-        clearOrder();
+      if (result) clearOrder();
+    } catch (error) {
+      if (!(error instanceof Error)) return;
+      if (error.name !== "CanceledError") {
+        console.log("Error create order", error);
+        showErrorMessage("Error create order on server");
       }
-    } catch (Error) {
-      console.log(Error);
     }
   };
 
@@ -60,7 +62,6 @@ const FormAdressOrder: FC = () => {
           required
         />
       </div>
-
       <div className={styles.WrapInput}>
         <label htmlFor="email" className={styles.Label}>
           Email:
@@ -76,7 +77,6 @@ const FormAdressOrder: FC = () => {
           required
         />
       </div>
-
       <div className={styles.WrapInput}>
         <label htmlFor="phone" className={styles.Label}>
           Phone:
@@ -92,7 +92,6 @@ const FormAdressOrder: FC = () => {
           required
         />
       </div>
-
       <div className={styles.WrapInput}>
         <label htmlFor="name" className={styles.Label}>
           Name:
@@ -107,14 +106,14 @@ const FormAdressOrder: FC = () => {
           required
         />
       </div>
-      <button type="submit" className={styles.ButtonSubmit}>
+
+      <button
+        type="submit"
+        className={styles.ButtonSubmit}
+        disabled={!isPeople}
+      >
         Submit
       </button>
-      <GoogleReCaptcha
-        onVerify={onVerify}
-        refreshReCaptcha={refreshReCaptcha}
-      />
-      <button onClick={doSomething}>Do Something</button>
     </form>
   );
 };

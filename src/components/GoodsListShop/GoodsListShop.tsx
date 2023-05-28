@@ -1,9 +1,10 @@
 import { FC, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import GoodsCartShop from "../GoodsCartShop/GoodsCartShop";
-import { getGoodsShop } from "../../services/apiBackend";
 import Loader from "../Loader/Loader";
 import styles from "./GoodsListShop.module.scss";
+import GoodsCartShop from "../GoodsCartShop/GoodsCartShop";
+import { getGoodsShop } from "../../services/apiBackend";
+import { showErrorMessage } from "../../helpers/message";
 import type { IGoods } from "../../types/typeShop";
 
 const GoodsListShop: FC = () => {
@@ -24,9 +25,13 @@ const GoodsListShop: FC = () => {
       try {
         const listGoods = await getGoodsShop(controller, shopId);
         setGoods(listGoods);
-      } catch (Error) {
+      } catch (error) {
         setGoods([]);
-        // console.log("Error fetch goods", Error);
+        if (!(error instanceof Error)) return;
+        if (error.name !== "CanceledError") {
+          console.log("Error fetch goods", Error);
+          showErrorMessage("Error fetch goods");
+        }
       } finally {
         setShowLoad(false);
       }

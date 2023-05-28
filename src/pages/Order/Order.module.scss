@@ -86,3 +86,11 @@
     background-color: #757575;
   }
 }
+
+.WrapCaptcha {
+  display: flex;
+  justify-content: end;
+  padding-right: 20px;
+  min-height: 80px;
+  text-align: end;
+}

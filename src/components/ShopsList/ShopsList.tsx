@@ -7,6 +7,7 @@ import styles from "./ShopsList.module.scss";
 import type { IShop } from "../../types/typeShop";
 import { useOrder } from "../../hooks/contextOrder";
 import Loader from "../Loader/Loader";
+import { showErrorMessage } from "../../helpers/message";
 
 const ShopsList: FC = () => {
   const [shops, setShops] = useState<IShop[]>([]);
@@ -23,9 +24,13 @@ const ShopsList: FC = () => {
       try {
         const listShops = await getShops(controller);
         setShops(listShops);
-      } catch (Error) {
+      } catch (error) {
         setShops([]);
-        // console.log("Error fetch", Error);
+        if (!(error instanceof Error)) return;
+        if (error.name !== "CanceledError") {
+          console.log("Error fetch", error);
+          showErrorMessage("Error fetch shops");
+        }
       } finally {
         setShowLoad(false);
       }
