@@ -1,7 +1,7 @@
 import axios from "axios";
 import { URL_API } from "../constants/api";
 import type { IShop, IGoods, IOrder, IFilter } from "../types/typeShop";
-import { emptyGoods } from "../types/typeShop";
+import { emptyGoods, epmptyShop } from "../types/typeShop";
 
 export const getShops = async (
   controller: AbortController
@@ -13,6 +13,21 @@ export const getShops = async (
 
   const { code, data } = responsData;
   if (code !== 200) return [];
+
+  return data;
+};
+
+export const getShopsById = async (
+  shopId: string,
+  controller: AbortController
+): Promise<IShop> => {
+  const { data: responsData } = await axios.get(`/api/shops/${shopId}`, {
+    baseURL: URL_API,
+    signal: controller.signal,
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return { ...epmptyShop };
 
   return data;
 };

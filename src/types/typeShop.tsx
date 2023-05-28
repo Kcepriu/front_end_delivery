@@ -5,6 +5,13 @@ export interface IShop {
   adress: string;
   [index: string]: string;
 }
+
+export const epmptyShop = {
+  _id: "",
+  name: "",
+  location: "",
+  adress: "",
+};
 export interface IGoods {
   _id: string;
   name: string;

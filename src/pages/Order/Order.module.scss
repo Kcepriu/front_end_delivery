@@ -30,6 +30,7 @@
 
 .WrapMap {
   padding: 0 32px;
+  overflow: hidden;
 }
 
 .WrapOrderContent {
@@ -89,7 +90,7 @@
 
 .WrapCaptcha {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   padding-right: 20px;
   min-height: 80px;
   text-align: end;
