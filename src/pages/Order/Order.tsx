@@ -12,6 +12,10 @@ const Order: FC = () => {
   const { order, clearOrder } = useOrder();
   const [isPeople, setIsPeople] = useState(false);
 
+  //Тулю костилі, часу нема перероблювати контекст
+  const [address, setAddress] = useState(order.adress);
+  const [location, setLocation] = useState(order.location);
+
   function handlerCaptcha(value: string | null) {
     setIsPeople(!!value);
   }
@@ -20,9 +24,15 @@ const Order: FC = () => {
     <div className={styles.WrapPage}>
       <div className={styles.WrapColumn}>
         <div className={styles.WrapMap}>
-          <Map />
+          <Map setAddress={setAddress} setLocation={setLocation} />
         </div>
-        <FormAdressOrder isPeople={isPeople} />
+        <FormAdressOrder
+          isPeople={isPeople}
+          address={address}
+          setAddress={setAddress}
+          location={location}
+          setLocation={setLocation}
+        />
       </div>
       <div className={styles.WrapRight}>
         <div className={styles.WrapOrderContent}>

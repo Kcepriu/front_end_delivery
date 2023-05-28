@@ -1,12 +1,24 @@
-import { FC, FormEvent, ChangeEvent } from "react";
+import { FC, FormEvent, ChangeEvent, Dispatch, SetStateAction } from "react";
 import styles from "./FormAdressOrder.module.scss";
 import { useOrder } from "../../hooks/contextOrder";
 import { createOrder } from "../../services/apiBackend";
 import { showErrorMessage } from "../../helpers/message";
+import { getLocationByAddress } from "../../services/apiBackend";
+
 interface IProps {
   isPeople: boolean;
+  address: string;
+  location: string;
+  setAddress: Dispatch<SetStateAction<string>>;
+  setLocation: Dispatch<SetStateAction<string>>;
 }
-const FormAdressOrder: FC<IProps> = ({ isPeople }) => {
+const FormAdressOrder: FC<IProps> = ({
+  isPeople,
+  address,
+  setAddress,
+  location,
+  setLocation,
+}) => {
   const { order, setFiledToOrder, clearOrder } = useOrder();
 
   const handlerOnChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -14,11 +26,16 @@ const FormAdressOrder: FC<IProps> = ({ isPeople }) => {
     setFiledToOrder(event.target.id, event.target.value);
   };
 
+  const handlerChangeAdress = (event: ChangeEvent<HTMLInputElement>) => {
+    setAddress(event.target.value);
+    setFiledToOrder("adress", event.target.value);
+    setLocation("");
+  };
+
   const validationData = (): boolean => {
     let message = "";
 
-    if (!order.adress)
-      message = message + '\n The "address" field is not filled';
+    if (!address) message = message + '\n The "address" field is not filled';
     if (!order.email) message = message + '\n The "email" field is not filled';
     if (!order.phone) message = message + '\n The "phone" field is not filled';
     if (!order.name) message = message + '\n The "name" field is not filled';
@@ -29,14 +46,36 @@ const FormAdressOrder: FC<IProps> = ({ isPeople }) => {
 
     return !message;
   };
+
+  const getLocation = async (address: string): Promise<string> => {
+    try {
+      const addr = await getLocationByAddress(address);
+      return addr;
+    } catch (Error) {
+      return "";
+    }
+  };
+
   const handlerOnSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!isPeople) return;
     if (!validationData()) return;
+    let saveLocation = location;
+
+    if (!saveLocation && address) {
+      //витянути локацію по адресі
+      saveLocation = await getLocation(address);
+    }
 
     try {
-      const result = await createOrder(order);
-      if (result) clearOrder();
+      const saveOrder = { ...order, adress: address, location: saveLocation };
+
+      const result = await createOrder(saveOrder);
+      if (result) {
+        clearOrder();
+        setAddress("");
+        setLocation("");
+      }
     } catch (error) {
       if (!(error instanceof Error)) return;
       if (error.name !== "CanceledError") {
@@ -56,8 +95,8 @@ const FormAdressOrder: FC<IProps> = ({ isPeople }) => {
           className={styles.Input}
           id="adress"
           type="text"
-          value={order.adress}
-          onChange={handlerOnChange}
+          value={address}
+          onChange={handlerChangeAdress}
           placeholder="Input address"
           required
         />

@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useState, Dispatch, SetStateAction } from "react";
 import {
   GoogleMap,
   LoadScript,
@@ -7,12 +7,15 @@ import {
   DirectionsRenderer,
 } from "@react-google-maps/api";
 import { useOrder } from "../../hooks/contextOrder";
-import { getShopsById } from "../../services/apiBackend";
-
+import { getShopsById, getAddressByLocation } from "../../services/apiBackend";
 import { MAP_KEY } from "../../constants/googkeKeys";
 import styles from "./Map.module.scss";
+interface IProps {
+  setAddress: Dispatch<SetStateAction<string>>;
+  setLocation: Dispatch<SetStateAction<string>>;
+}
 
-const Map: FC = () => {
+const Map: FC<IProps> = ({ setAddress, setLocation }) => {
   const { order } = useOrder();
 
   const [response, setResponse] = useState(null);
@@ -20,13 +23,37 @@ const Map: FC = () => {
   const [locationBuyer, setLocationBuyer] = useState();
   const [locationStore, setLocationStore] = useState();
 
-  // useEffect(() => {
-  //   setLocationStore({
-  //     //@ts-ignore
-  //     lat: 50.46993065494816,
-  //     lng: 30.501830359078916,
-  //   });
-  // }, []);
+  useEffect(() => {
+    if (!locationBuyer) return;
+
+    //@ts-ignore
+    setLocation(`${locationBuyer.lat}, ${locationBuyer.lng}`);
+
+    console.log(locationBuyer);
+
+    const controller = new AbortController();
+
+    const load = async () => {
+      try {
+        const addr = await getAddressByLocation(
+          //@ts-ignore
+          String(locationBuyer.lat),
+          //@ts-ignore
+          String(locationBuyer.lng),
+          controller
+        );
+        setAddress(addr);
+      } catch (Error) {
+        setAddress("");
+      }
+    };
+
+    load();
+
+    return () => {
+      controller.abort();
+    };
+  }, [locationBuyer, setAddress, setLocation]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -36,8 +63,9 @@ const Map: FC = () => {
         const { location } = await getShopsById(order.shop, controller);
 
         const arrLocation = location.split(",");
-        console.log("arrLocation", Number(arrLocation[0]));
-        console.log("arrLocation", Number(arrLocation[1]));
+        // console.log("arrLocation", Number(arrLocation[0]));
+        // console.log("arrLocation", Number(arrLocation[1]));
+
         setLocationStore({
           //@ts-ignore
           lat: Number(arrLocation[0]),
@@ -94,7 +122,7 @@ const Map: FC = () => {
           zoom={13}
           onClick={onClick}
         >
-          {locationBuyer && ( //@ts-ignore
+          {locationBuyer && (
             <Marker
               onLoad={onLoad}
               //@ts-ignore
@@ -102,7 +130,7 @@ const Map: FC = () => {
             />
           )}
 
-          {locationStore && ( //@ts-ignore
+          {locationStore && (
             <Marker
               onLoad={onLoad}
               //@ts-ignore

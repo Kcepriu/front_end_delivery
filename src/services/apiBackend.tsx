@@ -157,3 +157,41 @@ export const getOrdersByField = async (
 
   return data;
 };
+
+// * --- MAPS
+
+export const getAddressByLocation = async (
+  lat: string,
+  lng: string,
+  controller: AbortController
+): Promise<string> => {
+  const { data: responsData } = await axios.get("/api/map/by_location", {
+    baseURL: URL_API,
+    signal: controller.signal,
+    params: {
+      lat,
+      lng,
+    },
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return "";
+
+  return data.formatted_address || "";
+};
+
+export const getLocationByAddress = async (
+  address: string
+): Promise<string> => {
+  const { data: responsData } = await axios.get("/api/map/by_adress", {
+    baseURL: URL_API,
+    params: {
+      address,
+    },
+  });
+
+  const { code, data } = responsData;
+  if (code !== 200) return "";
+
+  return `${data.lat}, ${data.lng}`;
+};
