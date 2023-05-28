@@ -19,6 +19,11 @@ const Order: FC = () => {
   function handlerCaptcha(value: string | null) {
     setIsPeople(!!value);
   }
+  const handlerCancelOrder = () => {
+    clearOrder();
+    setAddress("");
+    setLocation("");
+  };
 
   return (
     <div className={styles.WrapPage}>
@@ -59,7 +64,7 @@ const Order: FC = () => {
         <button
           type="button"
           className={styles.ButtonCancel}
-          onClick={() => clearOrder()}
+          onClick={() => handlerCancelOrder}
         >
           Cancel order
         </button>
