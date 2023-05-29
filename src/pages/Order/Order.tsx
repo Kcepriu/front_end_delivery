@@ -64,7 +64,7 @@ const Order: FC = () => {
         <button
           type="button"
           className={styles.ButtonCancel}
-          onClick={() => handlerCancelOrder}
+          onClick={handlerCancelOrder}
         >
           Cancel order
         </button>

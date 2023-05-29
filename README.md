@@ -21,7 +21,6 @@ You will also see any lint errors in the console.
 
 ## Settings
 
-T
 This application does not require any prior configuration. However, you may need to enter your key data.
 
 ./src/constant/googkeKeys.tsx

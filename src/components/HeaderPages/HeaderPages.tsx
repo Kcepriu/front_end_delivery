@@ -17,7 +17,7 @@ const HeaderPages: FC = () => {
             <NavLink to={nameRouters.order}>Shopping Cart</NavLink>
           </li>
           <li>
-            <NavLink to={nameRouters.history}>Hitory</NavLink>
+            <NavLink to={nameRouters.history}>History</NavLink>
           </li>
         </ul>
       </nav>
