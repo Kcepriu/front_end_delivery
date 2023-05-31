@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 import { useOrder } from "../../hooks/contextOrder";
 import styles from "./Order.module.scss";
 import FormAdressOrder from "../../components/FormAdressOrder/FormAdressOrder";
@@ -11,8 +11,9 @@ import { CAPTHCA_KEY } from "../../constants/googkeKeys";
 const Order: FC = () => {
   const { order, clearOrder } = useOrder();
   const [isPeople, setIsPeople] = useState(false);
+  const recaptchaRef = useRef<ReCAPTCHA>(null);
 
-  //Тулю костилі, часу нема перероблювати контекст
+  //
   const [address, setAddress] = useState(order.adress);
   const [location, setLocation] = useState(order.location);
 
@@ -21,8 +22,12 @@ const Order: FC = () => {
   }
   const handlerCancelOrder = () => {
     clearOrder();
-    setAddress("");
+    // The address is determined automatically, it may not be necessary to reset it
+    // setAddress("");
     setLocation("");
+
+    //Reset captcha
+    if (recaptchaRef.current) recaptchaRef.current.reset();
   };
 
   return (
@@ -53,7 +58,11 @@ const Order: FC = () => {
         </div>
 
         <div className={styles.WrapCaptcha}>
-          <ReCAPTCHA sitekey={CAPTHCA_KEY} onChange={handlerCaptcha} />
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={CAPTHCA_KEY}
+            onChange={handlerCaptcha}
+          />
         </div>
 
         <div className={styles.Basement}>
