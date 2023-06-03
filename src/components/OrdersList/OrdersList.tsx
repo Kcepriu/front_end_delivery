@@ -1,10 +1,10 @@
 import { FC } from "react";
-import type { IOrder } from "../../types/typeShop";
+import type { IOrderWithGoods } from "../../types/typeShop";
 import GoodsCartHistory from "../GoodsCartHistory/GoodsCartHistory";
 import styles from "./OrdersList.module.scss";
 
 interface IProps {
-  order: IOrder;
+  order: IOrderWithGoods;
 }
 
 const OrdersList: FC<IProps> = ({ order }) => {
@@ -14,7 +14,7 @@ const OrdersList: FC<IProps> = ({ order }) => {
         <ul className={styles.ListGoods}>
           {order.goodsDocument.map((goods) => {
             return (
-              <li key={goods.goods}>
+              <li key={goods.goods._id}>
                 <GoodsCartHistory goods={goods} />
               </li>
             );

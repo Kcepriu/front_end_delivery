@@ -6,10 +6,10 @@ import { emptyFilter } from "../../types/typeShop";
 import { getOrders } from "../../services/apiBackend";
 import { useDebouncedCallback } from "use-debounce";
 import { showErrorMessage } from "../../helpers/message";
-import type { IOrder } from "../../types/typeShop";
+import type { IOrderWithGoods } from "../../types/typeShop";
 
 const History: FC = () => {
-  const [orders, setOrders] = useState<IOrder[]>([]);
+  const [orders, setOrders] = useState<IOrderWithGoods[]>([]);
   const [showLoad, setShowLoad] = useState(false);
   const [filter, setFilter] = useState({ ...emptyFilter });
 

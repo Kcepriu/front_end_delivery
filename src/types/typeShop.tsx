@@ -28,6 +28,13 @@ export interface IGoodsOrder {
   sum: number;
   price: number;
 }
+export interface IGoodsFullOrder {
+  goods: IGoods;
+  count: number;
+  sum: number;
+  price: number;
+}
+
 export interface IOrder {
   _id: string;
   name: string;
@@ -38,6 +45,18 @@ export interface IOrder {
   adress: string;
   sum: number;
   goodsDocument: IGoodsOrder[];
+}
+
+export interface IOrderWithGoods {
+  _id: string;
+  name: string;
+  shop: string;
+  phone: string;
+  email: string;
+  location: string;
+  adress: string;
+  sum: number;
+  goodsDocument: IGoodsFullOrder[];
 }
 
 export const emptyOrder: IOrder = {

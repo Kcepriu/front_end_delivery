@@ -1,6 +1,12 @@
 import axios from "axios";
 import { URL_API } from "../constants/api";
-import type { IShop, IGoods, IOrder, IFilter } from "../types/typeShop";
+import type {
+  IShop,
+  IGoods,
+  IOrder,
+  IFilter,
+  IOrderWithGoods,
+} from "../types/typeShop";
 import { emptyGoods, epmptyShop } from "../types/typeShop";
 
 export const getShops = async (
@@ -86,7 +92,7 @@ export const createOrder = async (order: IOrder): Promise<boolean> => {
 export const getOrders = async (
   filter: IFilter,
   controller: AbortController
-): Promise<IOrder[]> => {
+): Promise<IOrderWithGoods[]> => {
   if (filter.id) {
     const result = await getOrdersById(filter.id, controller);
     return result;
@@ -107,7 +113,7 @@ export const getOrders = async (
 // * getAllOrders
 export const getAllOrders = async (
   controller: AbortController
-): Promise<IOrder[]> => {
+): Promise<IOrderWithGoods[]> => {
   const { data: responsData } = await axios.get("/api/orders", {
     baseURL: URL_API,
     signal: controller.signal,
@@ -123,7 +129,7 @@ export const getAllOrders = async (
 export const getOrdersById = async (
   id: string,
   controller: AbortController
-): Promise<IOrder[]> => {
+): Promise<IOrderWithGoods[]> => {
   const ADD_URL = !id ? "" : `/${id}`;
   console.log("getOrdersById", ADD_URL);
 
@@ -143,7 +149,7 @@ export const getOrdersByField = async (
   nameField: string,
   value: string,
   controller: AbortController
-): Promise<IOrder[]> => {
+): Promise<IOrderWithGoods[]> => {
   const { data: responsData } = await axios.get("/api/orders", {
     baseURL: URL_API,
     signal: controller.signal,
